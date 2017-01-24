@@ -8,7 +8,8 @@ describe 'puppetversion', :type => :class do
         :lsbdistid       => 'ubuntu',
         :lsbdistcodename => 'squeeze',
         :agent_rundir    => '/var/lib/puppet/run',
-        :rubyversion     => '1.9.3'
+        :rubyversion     => '1.9.3',
+        :puppetversion   => Puppet.version
     } }
 
     let(:params) { { :version => '3.4.2' } }
@@ -28,7 +29,8 @@ describe 'puppetversion', :type => :class do
         :lsbdistid       => 'ubuntu',
         :lsbdistcodename => 'squeeze',
         :agent_rundir    => 'xxxxx',
-        :rubyversion     => '1.9.3'
+        :rubyversion     => '1.9.3',
+        :puppetversion   => Puppet.version
     } }
 
     let(:params) { { :version => '3.4.2' } }
@@ -42,7 +44,8 @@ describe 'puppetversion', :type => :class do
         :lsbdistid       => 'ubuntu',
         :lsbdistcodename => 'squeeze',
         :agent_rundir    => '/var/lib/puppet/run',
-        :rubyversion     => '1.9.3'
+        :rubyversion     => '1.9.3',
+        :puppetversion   => Puppet.version
     } }
 
     let(:params) { { :version => '3.4.3' } }
@@ -63,7 +66,8 @@ describe 'puppetversion', :type => :class do
         :lsbdistid       => 'ubuntu',
         :lsbdistcodename => 'squeeze',
         :agent_rundir    => '/var/lib/puppet/run',
-        :rubyversion     => '2.0.0'
+        :rubyversion     => '2.0.0',
+        :puppetversion   => Puppet.version
       }
     end
 
@@ -88,7 +92,8 @@ describe 'puppetversion', :type => :class do
       :os_maj_version            => '6',
       :architecture              => 'amd64',
       :pper_installed            => 'false',
-      :operatingsystemmajrelease => '6'
+      :operatingsystemmajrelease => '6',
+      :puppetversion             => Puppet.version
     }}
 
     let(:params) { { :version => '3.4.2' } }
@@ -105,7 +110,8 @@ describe 'puppetversion', :type => :class do
       :os_maj_version            => '7',
       :architecture              => 'amd64',
       :pper_installed            => 'false',
-      :operatingsystemmajrelease => '7'
+      :operatingsystemmajrelease => '7',
+      :puppetversion             => Puppet.version
     }}
 
     let(:params) { { :version => '3.4.2' } }
@@ -118,12 +124,12 @@ describe 'puppetversion', :type => :class do
   context 'when trying to ensure the puppet version is 3.4.2 on windows with default params' do
     let(:facts) do
       {
-        osfamily:      'windows',
-        puppetversion: '3.4.1'
+        :osfamily      => 'windows',
+        :puppetversion => '3.4.1'
       }
     end
 
-    let(:params) { { version: '3.4.2' } }
+    let(:params) { { :version => '3.4.2' } }
 
     it do
       should contain_file('UpgradePuppet script').with(
