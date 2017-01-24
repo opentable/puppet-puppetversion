@@ -44,10 +44,10 @@ group :test do
     gem 'json_pure', '<= 2.0.1',                                                  :require => false
   end
 
-  # if ENV['RUBY_VERSION'] =~ /^2.0/
-    gem 'faraday', '~> 0.9',                                                      :require => false
-    gem 'faraday_middleware', '~> 0.9',                                           :require => false
-  # end
+
+  gem 'faraday', '~> 0.9',                                                      :require => false
+  gem 'faraday_middleware', '~> 0.9',                                           :require => false
+
 
   gem 'puppetlabs_spec_helper', '~> 1.2',                                         :require => false
   gem 'puppet-lint', '~> 2.0',                                                    :require => false
