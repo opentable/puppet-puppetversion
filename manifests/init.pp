@@ -41,7 +41,8 @@ class puppetversion(
   $proxy_address = $puppetversion::params::proxy_address,
   $download_source = $puppetversion::params::download_source,
   $time_delay = $puppetversion::params::time_delay,
-  $ruby_augeas_version = $puppetversion::params::ruby_augeas_version
+  $ruby_augeas_version = $puppetversion::params::ruby_augeas_version,
+  $manage_repo = $puppetversion::params::manage_repo
 ) inherits puppetversion::params {
 
   case downcase($::osfamily) {
@@ -50,23 +51,25 @@ class puppetversion(
 
       $puppet_packages = ['puppet','puppet-common']
 
-      exec { 'rm_duplicate_puppet_source':
-        path    => '/usr/local/bin:/bin:/usr/bin',
-        command => 'sed -i \'s:deb\ http\:\/\/apt.puppetlabs.com\/ precise main::\' /etc/apt/sources.list',
-        onlyif  => 'grep \'deb http://apt.puppetlabs.com/ precise main\' /etc/apt/sources.list',
+      if $manage_repo {
+        apt::source { 'puppetlabs':
+          location => 'http://apt.puppetlabs.com',
+          repos    => 'main dependencies',
+          key      => {
+            'id'      => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
+            'content' => template('puppetversion/puppetlabs.gpg'),
+          },
+        }
       }
 
-      apt::source { 'puppetlabs':
-        location    => 'http://apt.puppetlabs.com',
-        repos       => 'main dependencies',
-        key         => '47B320EB4C7C375AA9DAE1A01054B7A24BD6EC30',
-        key_content => template('puppetversion/puppetlabs.gpg'),
-        require     => Exec['rm_duplicate_puppet_source'],
+      $package_require = $manage_repo ? {
+        true    => Apt::Source['puppetlabs'],
+        default => undef,
       }
 
       package { $puppet_packages:
         ensure  => "${version}-1puppetlabs1",
-        require => Apt::Source['puppetlabs'],
+        require => $package_require,
       }
 
       ini_setting { 'update init.d script PIDFILE to use agent_rundir':

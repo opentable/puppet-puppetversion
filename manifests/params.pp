@@ -16,4 +16,5 @@ class puppetversion::params {
   $time_delay =  3
 
   $ruby_augeas_version = '0.5.0'
+  $manage_repo = true
 }
