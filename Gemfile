@@ -58,14 +58,15 @@ group :test do
   # gem 'rspec-puppet-facts',                                         :require => false
   gem 'voxpupuli-release',                                          :require => false, :git => 'https://github.com/voxpupuli/voxpupuli-release-gem.git'
   gem 'rubocop', '0.37.0',                                          :require => false
-  # gem 'rspec-puppet-utils',                                         :require => false
-  # gem 'puppet-lint-absolute_classname-check',                       :require => false
-  # gem 'puppet-lint-leading_zero-check',                             :require => false
-  # gem 'puppet-lint-trailing_comma-check',                           :require => false
-  # gem 'puppet-lint-version_comparison-check',                       :require => false
-  # gem 'puppet-lint-classes_and_types_beginning_with_digits-check',  :require => false
-  # gem 'puppet-lint-unquoted_string-check',                          :require => false
-  # gem 'puppet-lint-variable_contains_upcase',                       :require => false
+
+  gem 'rspec-puppet-utils',                                         :require => false
+  gem 'puppet-lint-absolute_classname-check',                       :require => false
+  gem 'puppet-lint-leading_zero-check',                             :require => false
+  gem 'puppet-lint-trailing_comma-check',                           :require => false
+  gem 'puppet-lint-version_comparison-check',                       :require => false
+  gem 'puppet-lint-classes_and_types_beginning_with_digits-check',  :require => false
+  gem 'puppet-lint-unquoted_string-check',                          :require => false
+  gem 'puppet-lint-variable_contains_upcase',                       :require => false
 end
 
 group :development do

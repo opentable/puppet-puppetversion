@@ -53,9 +53,9 @@ class puppetversion(
 
       if $manage_repo {
         apt::source { 'puppetlabs':
-          location    => 'http://apt.puppetlabs.com',
-          repos       => 'main dependencies',
-          key         => {
+          location => 'http://apt.puppetlabs.com',
+          repos    => 'main dependencies',
+          key      => {
             'id'      => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
             'content' => template('puppetversion/puppetlabs.gpg'),
           },
