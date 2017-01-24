@@ -13,29 +13,6 @@ def location_for(place, fake_version = nil)
   end
 end
 
-# if facterversion = ENV['FACTER_GEM_VERSION']
-#   gem 'facter', facterversion.to_s, :require => false, :groups => [:test]
-# else
-#   gem 'facter', :require => false, :groups => [:test]
-# end
-
-# rubocop:disable LineLength
-# puppetversion == ENV['PUPPET_VERSION'].nil? ? '3.8.4' : ENV['PUPPET_VERSION'].to_s
-# rubocop:enable LineLength
-# gem 'puppet', puppetversion, :require => false, :groups => [:test]
-
-if facterversion = ENV['FACTER_GEM_VERSION']
-  gem 'facter', facterversion, :require => false
-else
-  gem 'facter', :require => false
-end
-
-if puppetversion = ENV['PUPPET_GEM_VERSION']
-  gem 'puppet', puppetversion, :require => false
-else
-  gem 'puppet', '> 3.0.0', '< 4.0.0', :require => false
-end
-
 group :test do
   gem 'rake', '~> 11.3',                                                          :require => false
   gem 'rspec', '~> 3.5',                                                          :require => false
@@ -89,7 +66,28 @@ end
 # end
 
 
+# if facterversion = ENV['FACTER_GEM_VERSION']
+#   gem 'facter', facterversion.to_s, :require => false, :groups => [:test]
+# else
+#   gem 'facter', :require => false, :groups => [:test]
+# end
 
+# rubocop:disable LineLength
+# puppetversion == ENV['PUPPET_VERSION'].nil? ? '3.8.4' : ENV['PUPPET_VERSION'].to_s
+# rubocop:enable LineLength
+# gem 'puppet', puppetversion, :require => false, :groups => [:test]
+
+if facterversion = ENV['FACTER_GEM_VERSION']
+  gem 'facter', facterversion, :require => false
+else
+  gem 'facter', :require => false
+end
+
+if puppetversion = ENV['PUPPET_GEM_VERSION']
+  gem 'puppet', puppetversion, :require => false
+else
+  gem 'puppet', '> 3.0.0', '< 4.0.0', :require => false
+end
 
 
 # vim:ft=ruby
