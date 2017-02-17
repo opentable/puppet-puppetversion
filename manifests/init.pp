@@ -65,7 +65,6 @@ class puppetversion(
       }
 
       if $::lsbdistrelease == '16.04' {
-      #if $::operatingsystemmajrelease == '16.04' {
       	$full_version = "${version}"
       }
       else {
