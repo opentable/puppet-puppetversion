@@ -64,8 +64,16 @@ class puppetversion(
         require     => Exec['rm_duplicate_puppet_source'],
       }
 
+      if $::lsbdistrelease == '16.04' {
+      #if $::operatingsystemmajrelease == '16.04' {
+      	$full_version = "${version}"
+      }
+      else {
+      	$full_version = "${version}-1puppetlabs1"
+      }
+	
       package { $puppet_packages:
-        ensure  => "${version}-1puppetlabs1",
+        ensure  => "${full_version}",
         require => Apt::Source['puppetlabs'],
       }
 
