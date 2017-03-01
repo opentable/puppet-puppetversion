@@ -80,6 +80,7 @@ This module is tested on the following platforms:
 * CentOS 7
 * Ubuntu 12.04
 * Ubuntu 14.04
+* Ubuntu 16.04 (puppet3.8.5-2 only)
 * Windows 2008 R2
 * Windows 2012 R2
 
