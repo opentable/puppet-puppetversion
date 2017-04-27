@@ -88,10 +88,11 @@ class puppetversion(
       }
 
       if versioncmp($::rubyversion, '2.0.0') >= 0 {
-        package { ['pkg-config', 'build-essential', 'libaugeas-dev']:
+
+        ensure_resource('Package', ['pkg-config', 'build-essential', 'libaugeas-dev'], {
           ensure => present,
           before => Package['ruby-augeas'],
-        }
+        })
 
         package { 'ruby-augeas':
           ensure          => present,
