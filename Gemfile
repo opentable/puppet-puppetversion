@@ -71,6 +71,9 @@ end
 
 if puppetversion = ENV['PUPPET_GEM_VERSION']
   gem 'puppet', puppetversion, :require => false
+  if Gem::Version.new(puppetversion) < Gem::Version.new('5.0')
+    gem 'semantic_puppet', :require => false
+  end
 else
   gem 'puppet', '> 3.0.0', '< 4.0.0', :require => false
 end
