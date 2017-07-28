@@ -88,7 +88,25 @@ class puppetversion(
       }
 
       if versioncmp($::rubyversion, '2.0.0') >= 0 {
-        package { ['pkg-config', 'build-essential', 'libaugeas-dev']:
+        if ($::operatingsystem == 'Ubuntu') and ($::lsbdistrelease == '12.04') {
+          package { ['libaugeas0', 'augeas-lenses' ]:
+            ensure  => '1.2.0-0ubuntu1.1~ubuntu12.04.1',
+          }
+          package { 'libaugeas-dev':
+            ensure  => '1.2.0-0ubuntu1.1~ubuntu12.04.1',
+            require => Package['libaugeas0'],
+          }
+        } else {
+          package { ['libaugeas0', 'augeas-lenses' ]:
+            ensure => latest,
+          }
+          package { 'libaugeas-dev':
+            ensure  => latest,
+            require => Package['libaugeas0'],
+          }
+        }
+
+        package { ['pkg-config', 'build-essential']:
           ensure => present,
           before => Package['ruby-augeas'],
         }
