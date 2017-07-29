@@ -41,6 +41,7 @@ group :test do
   gem 'puppet-lint-unquoted_string-check',                          :require => false
   gem 'puppet-lint-variable_contains_upcase',                       :require => false
   gem 'safe_yaml', '~>1.0.4'
+  gem 'semantic_puppet',                                             :require => false
 end
 
 group :development do
