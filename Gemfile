@@ -21,7 +21,7 @@ group :test do
     gem 'json_pure', '<= 2.0.1',                                    :require => false
     gem 'metadata-json-lint', '<= 1.1.0',                           :require => false
   else
-    gem 'metadata-json-lint', '~> 2.0.1',                           :require => false
+    gem 'metadata-json-lint', '2.0.0',                              :require => false
   end
 
   gem 'faraday', '~> 0.9',                                          :require => false
