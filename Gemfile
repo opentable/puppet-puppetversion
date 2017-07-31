@@ -19,6 +19,9 @@ group :test do
 
   if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.0.0')
     gem 'json_pure', '<= 2.0.1',                                    :require => false
+    gem 'metadata-json-lint', '<= 1.1.0',                           :require => false
+  else
+    gem 'metadata-json-lint', '~> 2.0.1',                           :require => false
   end
 
   gem 'faraday', '~> 0.9',                                          :require => false
@@ -29,7 +32,6 @@ group :test do
   gem 'rspec-puppet', '~> 2.0',                                     :require => false
   gem 'puppet-blacksmith', '~> 3.4',                                :require => false
 
-  gem 'metadata-json-lint',                                         :require => false
   gem 'voxpupuli-release',                                          :require => false, :git => 'https://github.com/voxpupuli/voxpupuli-release-gem.git'
 
   gem 'rspec-puppet-utils',                                         :require => false
