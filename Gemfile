@@ -1,5 +1,7 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
+facterversion = ENV['FACTER_GEM_VERSION']
+puppetversion = ENV['PUPPET_GEM_VERSION']
 
 def location_for(place, fake_version = nil)
   if place =~ %r{/^(git[:@][^#]*)#(.*)/}
@@ -21,6 +23,10 @@ group :test do
     gem 'json_pure', '<= 2.0.1',                                    :require => false
     gem 'metadata-json-lint', '<= 1.1.0',                           :require => false
   else
+    # metadata-json-lint 2.x requires semantic_puppet for Puppet < 4.9
+    if Gem::Version.new(puppetversion) < Gem::Version.new('4.9')
+      gem 'semantic_puppet', :require => false
+    end
     gem 'metadata-json-lint', '2.0.0',                              :require => false
   end
 
@@ -65,17 +71,14 @@ group :system_tests do
   gem 'beaker-puppet_install_helper',  :require => false
 end
 
-if facterversion = ENV['FACTER_GEM_VERSION']
+if facterversion
   gem 'facter', facterversion, :require => false
 else
   gem 'facter', :require => false
 end
 
-if puppetversion = ENV['PUPPET_GEM_VERSION']
+if puppetversion
   gem 'puppet', puppetversion, :require => false
-  if Gem::Version.new(puppetversion) < Gem::Version.new('5.0')
-    gem 'semantic_puppet', :require => false
-  end
 else
   gem 'puppet', '> 3.0.0', '< 4.0.0', :require => false
 end
