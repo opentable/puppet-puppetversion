@@ -1,5 +1,7 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
+facterversion = ENV['FACTER_GEM_VERSION']
+puppetversion = ENV['PUPPET_GEM_VERSION']
 
 def location_for(place, fake_version = nil)
   if place =~ %r{/^(git[:@][^#]*)#(.*)/}
@@ -19,6 +21,13 @@ group :test do
 
   if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.0.0')
     gem 'json_pure', '<= 2.0.1',                                    :require => false
+    gem 'metadata-json-lint', '<= 1.1.0',                           :require => false
+  else
+    # metadata-json-lint 2.x requires semantic_puppet for Puppet < 4.9
+    if Gem::Version.new(puppetversion) < Gem::Version.new('4.9')
+      gem 'semantic_puppet', '1.0.1',                               :require => false
+    end
+    gem 'metadata-json-lint', '2.0.0',                              :require => false
   end
 
   gem 'faraday', '~> 0.9',                                          :require => false
@@ -29,7 +38,6 @@ group :test do
   gem 'rspec-puppet', '~> 2.0',                                     :require => false
   gem 'puppet-blacksmith', '~> 3.4',                                :require => false
 
-  gem 'metadata-json-lint',                                         :require => false
   gem 'voxpupuli-release',                                          :require => false, :git => 'https://github.com/voxpupuli/voxpupuli-release-gem.git'
 
   gem 'rspec-puppet-utils',                                         :require => false
@@ -41,7 +49,6 @@ group :test do
   gem 'puppet-lint-unquoted_string-check',                          :require => false
   gem 'puppet-lint-variable_contains_upcase',                       :require => false
   gem 'safe_yaml', '~>1.0.4'
-  gem 'semantic_puppet',                                             :require => false
 end
 
 group :development do
@@ -64,13 +71,13 @@ group :system_tests do
   gem 'beaker-puppet_install_helper',  :require => false
 end
 
-if facterversion = ENV['FACTER_GEM_VERSION']
+if facterversion
   gem 'facter', facterversion, :require => false
 else
   gem 'facter', :require => false
 end
 
-if puppetversion = ENV['PUPPET_GEM_VERSION']
+if puppetversion
   gem 'puppet', puppetversion, :require => false
 else
   gem 'puppet', '> 3.0.0', '< 4.0.0', :require => false
