@@ -55,7 +55,7 @@ group :development do
   gem 'travis',            :require => false
   gem 'travis-lint',       :require => false
   gem 'guard-rake',        :require => false
-  gem 'rubocop', '0.37.0', :require => false
+  gem 'rubocop', '>= 0.49.0', :require => false
 end
 
 group :system_tests do
