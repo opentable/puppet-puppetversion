@@ -28,12 +28,18 @@
 # [*ruby_augeas_version*]
 # (Debian only) - The version of ruby-augeas to install from RubyGems.
 #
+# [*manage_repo*]
+# (Debian only) - Manage the apt repo for puppetlabs
+#
+# [*apt_location*]
+# (Debian only) - URL for apt repo for puppetlabs
+#
 # === Examples
 #
 # Installing puppet to a specified version
 #
 # class { 'puppetversion':
-#   version    => '3.4.3'
+#   version => '3.4.3'
 # }
 #
 class puppetversion(
@@ -42,7 +48,8 @@ class puppetversion(
   $download_source = $puppetversion::params::download_source,
   $time_delay = $puppetversion::params::time_delay,
   $ruby_augeas_version = $puppetversion::params::ruby_augeas_version,
-  $manage_repo = $puppetversion::params::manage_repo
+  $manage_repo = $puppetversion::params::manage_repo,
+  $apt_location = $puppetversion::params::apt_location,
 ) inherits puppetversion::params {
 
   case downcase($::osfamily) {
@@ -53,7 +60,7 @@ class puppetversion(
 
       if $manage_repo {
         apt::source { 'puppetlabs':
-          location => 'http://apt.puppetlabs.com',
+          location => $apt_location,
           repos    => 'main dependencies',
           key      => {
             'id'      => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
@@ -74,7 +81,7 @@ class puppetversion(
       }
 
       package { $puppet_packages:
-        ensure  => "${full_version}",
+        ensure  => $full_version,
         require => $package_require,
       }
 
@@ -135,7 +142,6 @@ class puppetversion(
         # Using powershell to uninstall and reinstall puppet because there is not workflow
         # support for inplace upgrades
         file { 'UpgradePuppet script':
-          ensure  => present,
           path    => 'C:/Windows/Temp/UpgradePuppet.ps1',
           content => template('puppetversion/UpgradePuppet.ps1.erb'),
         }
@@ -148,7 +154,6 @@ class puppetversion(
         # clients run in a differne timezone to the master
 
         file { 'ScheduleTask script':
-          ensure  => present,
           path    => 'C:/Windows/Temp/ScheduledTask.ps1',
           content => template('puppetversion/ScheduledTask.ps1.erb'),
           require => File['UpgradePuppet script'],
