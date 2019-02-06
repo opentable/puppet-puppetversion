@@ -41,6 +41,10 @@
        "version_requirement": ">= 0.1.4 <1.0.0"
     },
     {
+       "name": "puppetlabs/puppet_agent",
+       "version_requirement": "= 1.7.0"
+    },
+    {
        "name": "opentable/altlib",
        "version_requirement": ">= 0.2.0 <1.0.0"
     }

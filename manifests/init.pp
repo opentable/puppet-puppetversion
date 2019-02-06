@@ -54,74 +54,13 @@ class puppetversion(
 
   case downcase($::osfamily) {
     'debian': {
-      validate_absolute_path($::agent_rundir)
-
-      $puppet_packages = ['puppet','puppet-common']
-
-      if $manage_repo {
-        apt::source { 'puppetlabs':
-          location => $apt_location,
-          repos    => 'main dependencies',
-          key      => {
-            'id'      => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
-            'content' => template('puppetversion/puppetlabs.gpg'),
-          },
-        }
-      }
-
-      $package_require = $manage_repo ? {
-        true    => Apt::Source['puppetlabs'],
-        default => undef,
-      }
-
-      if $::lsbdistrelease == '16.04' {
-        $full_version = $version
+      if versioncmp($version, '5') < 0 {
+        class {'puppetversion::apt_v3': }
       } else {
-        $full_version = "${version}-1puppetlabs1"
-      }
-
-      package { $puppet_packages:
-        ensure  => $full_version,
-        require => $package_require,
-      }
-
-      ini_setting { 'update init.d script PIDFILE to use agent_rundir':
-        ensure  => present,
-        section => '',
-        setting => 'PIDFILE',
-        value   => "\"${::agent_rundir}/\${NAME}.pid\"",
-        path    => '/etc/init.d/puppet',
-        require => Package['puppet'],
-      }
-
-      if versioncmp($::rubyversion, '2.0.0') >= 0 {
-        if ($::operatingsystem == 'Ubuntu') and ($::lsbdistrelease == '12.04') {
-          package { ['libaugeas0', 'augeas-lenses' ]:
-            ensure  => '1.2.0-0ubuntu1.1~ubuntu12.04.1',
-          }
-          package { 'libaugeas-dev':
-            ensure  => '1.2.0-0ubuntu1.1~ubuntu12.04.1',
-            require => Package['libaugeas0'],
-          }
-        } else {
-          package { ['libaugeas0', 'augeas-lenses' ]:
-            ensure => latest,
-          }
-          package { 'libaugeas-dev':
-            ensure  => latest,
-            require => Package['libaugeas0'],
-          }
-        }
-
-        package { ['pkg-config', 'build-essential']:
-          ensure => present,
-          before => Package['ruby-augeas'],
-        }
-
-        package { 'ruby-augeas':
-          ensure          => present,
-          provider        => 'gem',
-          install_options => { '-v' => $ruby_augeas_version },
+        class {'::puppet_agent':
+          source          => $apt_location,
+          package_version => $version,
+          collection      => 'puppet5',
         }
       }
     }
