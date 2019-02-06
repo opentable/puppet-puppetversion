@@ -55,7 +55,9 @@ class puppetversion(
   case downcase($::osfamily) {
     'debian': {
       if versioncmp($version, '5') < 0 {
-        class {'puppetversion::apt_v3': }
+        class {'puppetversion::apt_v3':
+          apt_location => $apt_location,
+        }
       } else {
         class {'::puppet_agent':
           source          => $apt_location,
