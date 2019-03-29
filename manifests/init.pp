@@ -50,6 +50,7 @@ class puppetversion(
   $ruby_augeas_version = $puppetversion::params::ruby_augeas_version,
   $manage_repo = $puppetversion::params::manage_repo,
   $apt_location = $puppetversion::params::apt_location,
+  $msi_location = $puppetversion::params::msi_location,
 ) inherits puppetversion::params {
 
   case downcase($::osfamily) {
@@ -58,7 +59,7 @@ class puppetversion(
         validate_absolute_path($::agent_rundir)
 
         $puppet_packages = ['puppet','puppet-common']
-      
+
         if $manage_repo {
           apt::source { 'puppetlabs':
             location => $apt_location,
@@ -123,7 +124,7 @@ class puppetversion(
             ensure          => present,
             provider        => 'gem',
             install_options => { '-v' => $ruby_augeas_version },
-	  }
+          }
         }
       } else {
         class {'::puppet_agent':
@@ -144,55 +145,62 @@ class puppetversion(
 
     }
     'windows': {
-
-      if $::puppetversion != $version {
-
-        # Using powershell to uninstall and reinstall puppet because there is not workflow
-        # support for inplace upgrades
-        file { 'UpgradePuppet script':
-          path    => 'C:/Windows/Temp/UpgradePuppet.ps1',
-          content => template('puppetversion/UpgradePuppet.ps1.erb'),
+      if versioncmp($version, '4') > 0 {
+        class {'::puppet_agent':
+          source          => $msi_location,
+          package_version => $version,
         }
+      }
+      else {
+        if $::puppetversion != $version {
 
-        # Using another powershell script to create a scheduled task to run the upgrade script.
-        #
-        # The scheduled_task resource is not being used here because there is no way to pass
-        # local time to the start_time parameter. Using the strftime from stdlib will use the
-        # time at catalog compilation (the time of the master) which will cause problems if you
-        # clients run in a differne timezone to the master
+          # Using powershell to uninstall and reinstall puppet because there is not workflow
+          # support for inplace upgrades
+          file { 'UpgradePuppet script':
+            path    => 'C:/Windows/Temp/UpgradePuppet.ps1',
+            content => template('puppetversion/UpgradePuppet.ps1.erb'),
+          }
 
-        file { 'ScheduleTask script':
-          path    => 'C:/Windows/Temp/ScheduledTask.ps1',
-          content => template('puppetversion/ScheduledTask.ps1.erb'),
-          require => File['UpgradePuppet script'],
-          notify  => Exec['create scheduled task'],
-        }
+          # Using another powershell script to create a scheduled task to run the upgrade script.
+          #
+          # The scheduled_task resource is not being used here because there is no way to pass
+          # local time to the start_time parameter. Using the strftime from stdlib will use the
+          # time at catalog compilation (the time of the master) which will cause problems if you
+          # clients run in a differne timezone to the master
 
-        exec { 'create scheduled task':
-          command     => 'C:\Windows\Temp\ScheduledTask.ps1 -ensure present',
-          provider    => powershell,
-          require     => File['ScheduleTask script'],
-          refreshonly => true,
-        }
+          file { 'ScheduleTask script':
+            path    => 'C:/Windows/Temp/ScheduledTask.ps1',
+            content => template('puppetversion/ScheduledTask.ps1.erb'),
+            require => File['UpgradePuppet script'],
+            notify  => Exec['create scheduled task'],
+          }
 
-      } else {
+          exec { 'create scheduled task':
+            command     => 'C:\Windows\Temp\ScheduledTask.ps1 -ensure present',
+            provider    => powershell,
+            require     => File['ScheduleTask script'],
+            refreshonly => true,
+          }
 
-        file { 'UpgradePuppet script':
-          ensure => absent,
-          path   => 'C:/Windows/Temp/UpgradePuppet.ps1',
-        }
+        } else {
 
-        # Yes we still have to exec to remove because scheduled_task { ensure => absent } doesn't work!
-        exec { 'remove scheduled task':
-          command  => 'C:\Windows\Temp\ScheduledTask.ps1 -ensure absent',
-          provider => powershell,
-          before   => File['ScheduleTask script'],
-          onlyif   => 'C:\Windows\Temp\ScheduledTask.ps1 -exists True',
-        }
+          file { 'UpgradePuppet script':
+            ensure => absent,
+            path   => 'C:/Windows/Temp/UpgradePuppet.ps1',
+          }
 
-        file { 'ScheduleTask script':
-          ensure => absent,
-          path   => 'C:/Windows/Temp/ScheduledTask.ps1',
+          # Yes we still have to exec to remove because scheduled_task { ensure => absent } doesn't work!
+          exec { 'remove scheduled task':
+            command  => 'C:\Windows\Temp\ScheduledTask.ps1 -ensure absent',
+            provider => powershell,
+            before   => File['ScheduleTask script'],
+            onlyif   => 'C:\Windows\Temp\ScheduledTask.ps1 -exists True',
+          }
+
+          file { 'ScheduleTask script':
+            ensure => absent,
+            path   => 'C:/Windows/Temp/ScheduledTask.ps1',
+          }
         }
       }
     }
