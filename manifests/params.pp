@@ -12,6 +12,7 @@ class puppetversion::params {
   $proxy_address = ''
   $download_source = 'https://downloads.puppetlabs.com/windows'
   $apt_location = 'http://apt.puppetlabs.com'
+  $msi_location = 'http://downloads.puppetlabs.com/windows/puppet-3.8.7-x64.msi'
 
   $time_delay =  3
 
