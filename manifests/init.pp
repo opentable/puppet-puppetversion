@@ -127,10 +127,25 @@ class puppetversion(
           }
         }
       } else {
-        class {'::puppet_agent':
-          source          => $apt_location,
-          package_version => $version,
-          collection      => 'puppet5',
+        if $::lsbdistrelease == '12.04' {
+          apt::source {'pc_repo':
+            location => $apt_location,
+            release  => 'wheezy',
+            repos    => 'puppet5',
+          }
+          -> class { '::puppet_agent::prepare':
+            package_version => $package_version,
+          }
+          -> package {'puppet-agent':
+            ensure => $package_version,
+          }
+
+        } else {
+          class {'::puppet_agent':
+            source          => $apt_location,
+            package_version => $version,
+            collection      => 'puppet5',
+          }
         }
       }
     }
