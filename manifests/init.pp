@@ -87,13 +87,15 @@ class puppetversion(
           require => $package_require,
         }
 
-        ini_setting { 'update init.d script PIDFILE to use agent_rundir':
-          ensure  => present,
-          section => '',
-          setting => 'PIDFILE',
-          value   => "\"${::agent_rundir}/\${NAME}.pid\"",
-          path    => '/etc/init.d/puppet',
-          require => Package['puppet'],
+        unless (versioncmp($::puppetversion, '5.0.0') >= 0) {
+          ini_setting { 'update init.d script PIDFILE to use agent_rundir':
+            ensure  => present,
+            section => '',
+            setting => 'PIDFILE',
+            value   => "\"${::agent_rundir}/\${NAME}.pid\"",
+            path    => '/etc/init.d/puppet',
+            require => Package['puppet'],
+          }
         }
 
         if versioncmp($::rubyversion, '2.0.0') >= 0 {
